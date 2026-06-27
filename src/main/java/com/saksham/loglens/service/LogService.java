@@ -47,7 +47,11 @@ public class LogService {
             String line;
             while((line = reader.readLine()) != null) {
                 LogEntry logEntry = LogParser.parser(line);
-
+                if(logEntry == null) {
+                    System.out.println("PARSER FAILED FOR LINE: " + line); // Ye tujhe bata dega fail kaha hua
+                } else {
+                    // ... rest of the code
+                }
                 if(logEntry != null) {
                     logEntry.setLogBatch(logBatch);
                     entries.add(logEntry);

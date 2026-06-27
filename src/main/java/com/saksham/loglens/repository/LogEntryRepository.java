@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.saksham.loglens.model.LogEntry;
 
 public interface LogEntryRepository extends JpaRepository<LogEntry, Long>{
-    List<LogEntry> findbyLogBatch_BatchIdAndLevel(Long batchId, String level);
+    List<LogEntry> findByLogBatch_BatchIdAndLevel(Long batchId, String level);
 }

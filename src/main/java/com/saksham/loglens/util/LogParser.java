@@ -1,32 +1,29 @@
 package com.saksham.loglens.util;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import com.saksham.loglens.model.LogEntry;
 
 public class LogParser {
     
-    private static final Pattern LOG_PATTERN = Pattern.compile("^(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2})\\s+\\[[^\\]]+\\]\\s+([A-Z]+)\\s+([\\w\\.]+)\\s+-\\s+(.*)$");
-    
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    
-    public static LogEntry parser(String rawLog) {
-        if(rawLog == null || rawLog.trim().isEmpty()) {
+    // Sateek Regex jo Spring Boot logs ko accurately nichodega
+    private static final Pattern PATTERN = Pattern.compile("^.*?\\s+(INFO|WARN|ERROR|DEBUG|TRACE)\\s+\\d+\\s+---\\s+\\[.*?\\]\\s+([^\\s:]+)\\s*:\\s+(.*)$");
+
+    public static LogEntry parser(String line) {
+        if (line == null || line.trim().isEmpty()) {
             return null;
         }
 
-        Matcher matcher = LOG_PATTERN.matcher(rawLog);
-        if(matcher.matches()) {
+        Matcher matcher = PATTERN.matcher(line);
+        if (matcher.find()) {
             LogEntry entry = new LogEntry();
-            entry.setTimeStamp(LocalDateTime.parse(matcher.group(1), FORMATTER));
-            entry.setLevel(matcher.group(2));
-            entry.setClassName(matcher.group(3));
-            entry.setMessage(matcher.group(4));
+            entry.setLevel(matcher.group(1));
+            entry.setClassName(matcher.group(2));
+            entry.setMessage(matcher.group(3));
             return entry;
         }
-
-        return null;
+        
+        return null; 
     }
 }

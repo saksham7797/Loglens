@@ -29,7 +29,7 @@ public class AiAnalysisService {
         List<LogEntry> errorLogs = logEntryRepository.findByLogBatch_BatchIdAndLevel(batchId, "ERROR");
 
         if(errorLogs.isEmpty()) {
-            return null;
+            throw new RuntimeException("Logs Not Found!");
         }
         StringBuilder log = new StringBuilder();
         for (int i = 0; i < errorLogs.size(); i++) {
@@ -69,11 +69,22 @@ public class AiAnalysisService {
             - Ignore dynamic data noise like unique PIDs, timestamps, or memory addresses when diagnosing the root cause.
             - If the log contains multiple instances of the same error pattern, consolidate them into a single comprehensive solution.
             - Keep the tone professional, objective, and direct. No conversational filler.
+            - CRITICAL: You MUST return a complete, non-empty response. Under no circumstances should you return an empty string.
 
             Error Log Stream to Analyze:
-        """ + log.toString();
+        """ + log.toString();   
         
-        String response = chatModel.call(prompt);
+        String response = "";
+        try {
+            response = chatModel.call(prompt);
+        } catch (Exception e) {
+            System.err.println("GEMINI ERROR: " + e.getMessage());
+            response = "AI Engine is temporarily down or blocked the request due to limits/safety. Reason: " + e.getMessage();
+        }
+
+        if (response == null || response.trim().isEmpty()) {
+            response = "AI API ne empty response bheja h. Try modifying the prompt or check safety settings.";
+        }
 
         LogAnalysisResult result = new LogAnalysisResult();
         result.setBatchId(batchId);
