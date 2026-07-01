@@ -22,8 +22,10 @@
 
         private Long batchId;
         private String errorPatternHash;
+
         @Column(columnDefinition = "TEXT")
         private String aiExplanation;
+        
         @Column(columnDefinition = "TEXT")
         private String fixExplanation;
     }
